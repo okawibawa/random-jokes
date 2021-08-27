@@ -4,7 +4,9 @@ import './App.css';
 
 function App() {
   const [joke, setJoke] = useState([]);
-  const [query, setQuery] = useState();
+  const [query, setQuery] = useState(
+    window.localStorage.getItem('query') !== null ? window.localStorage.getItem('query') : undefined
+  );
 
   useEffect(() => {
     const fetchJoke = async () => {
@@ -19,7 +21,21 @@ function App() {
     fetchJoke();
   }, [query]);
 
-  console.log(joke[0]);
+  const handleChangeQuery = (e) => {
+    e.preventDefault();
+
+    window.localStorage.setItem('query', e.target.value);
+    setQuery(e.target.value);
+  };
+
+  const handleRefresh = (e) => {
+    e.preventDefault();
+
+    window.location.reload();
+  };
+
+  console.log(query);
+  console.log(window.localStorage.getItem('query'));
 
   return (
     <div className="App">
@@ -34,11 +50,18 @@ function App() {
           <>
             <label for="cars">Choose a joke type: </label>
 
-            <select name="jokes" id="jokes" onChange={(e) => setQuery(e.target.value)}>
+            <select name="jokes" id="jokes" onChange={handleChangeQuery} value={query}>
               <option value="general">Random</option>
               <option value="programming">Programming</option>
               <option value="knock-knock">Knock Knock</option>
             </select>
+
+            <button
+              onClick={handleRefresh}
+              style={{ display: 'block', margin: 'auto', marginTop: '2em', padding: '.5em' }}
+            >
+              Refresh
+            </button>
 
             {joke ? (
               query ? (
